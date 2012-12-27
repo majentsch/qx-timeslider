@@ -1,17 +1,18 @@
-TimeSlider
-==========
+qx-TimeSlider
+============
 
 The TimeSlider is a widget, that allows the user to select a certain time frame
 using a resizable slider.
 
-![TimeSlider](http://blog.netways.de/wp-content/uploads/2012/12/timeSlider11.png "TimeSlider")]
+![TimeSlider](http://blog.netways.de/wp-content/uploads/2012/12/timeSlider11.png "TimeSlider")
 
 
 ### Installation ###
 
-Clone this repository and include it like any other qooxdoo library. 
-(See http://manual.qooxdoo.org/current/pages/development/library_custom.html#using-the-library )
+- Clone this repository and include it like any other qooxdoo library 
+     http://manual.qooxdoo.org/current/pages/development/library_custom.html#using-the-library
 
+- The widget will now be available in the timeslider namespace of your project.
 
 ### Usage ###
 
