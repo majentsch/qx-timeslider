@@ -4,6 +4,9 @@ TimeSlider
 The TimeSlider is a widget, that allows the user to select a certain time frame
 using a resizable slider.
 
+![TimeSlider](http://blog.netways.de/wp-content/uploads/2012/12/timeSlider11.png "TimeSlider")]
+
+
 ### Installation ###
 
 Clone this repository and include it like any other qooxdoo library. 
