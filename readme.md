@@ -16,44 +16,45 @@ using a resizable slider.
 ### Usage ###
 
 
-<!-- language: lang-js -->
+```js
+
+//Include the appearances from the contribution
+qx.Theme.include(YOUR_APPLICATION_NAMESPACE.theme.Appearance, timeslider.theme.Appearance);
+
+//Include the colors from the contribution
+qx.Theme.include(YOUR_APPLICATION_NAMESPACE.theme.Color, timeslider.theme.Color);
 
 
-	//Include the appearances from the contribution
-	qx.Theme.include(YOUR_APPLICATION_NAMESPACE.theme.Appearance, timeslider.theme.Appearance);
-
-	//Include the colors from the contribution
-	qx.Theme.include(YOUR_APPLICATION_NAMESPACE.theme.Color, timeslider.theme.Color);
-
-
-	// Create a slider to display the years 2010 - 2020
-        var sliderYear = new timeslider.TimeSlider( 
-        	new timeslider.TimeFrame(
-			new Date(2010,1,1),
-                	new Date(2020,1,1)),
-                	'year');
-        sliderYear.setTimeSelection( 
-		new timeslider.TimeFrame(new Date(2012,11,1),new Date(2013,2,1)));
+// Create a slider to display the years 2010 - 2020
+var sliderYear = new timeslider.TimeSlider( 
+	new timeslider.TimeFrame(
+		new Date(2010,1,1),
+        	new Date(2020,1,1)),
+        	'year');
+sliderYear.setTimeSelection( 
+	new timeslider.TimeFrame(new Date(2012,11,1),new Date(2013,2,1)));
 
 
-	// Create a slider to display the months Jul. 2010 - Jul. 2011 
-        var sliderMonth = new timeslider.TimeSlider( 
-        	new timeslider.TimeFrame(
-			new Date(2010,6,1),
-		        new Date(2011,6,1)),
-		        'month');
-        sliderMonth.setTimeSelection(
-		new timeslider.TimeFrame(new Date(2012,11,1),new Date(2013,2,1)));
+// Create a slider to display the months Jul. 2010 - Jul. 2011 
+var sliderMonth = new timeslider.TimeSlider( 
+	new timeslider.TimeFrame(
+		new Date(2010,6,1),
+	        new Date(2011,6,1)),
+	        'month');
+sliderMonth.setTimeSelection(
+	new timeslider.TimeFrame(new Date(2012,11,1),new Date(2013,2,1)));
 
 
-	var doc = this.getRoot();
-	doc.add(sliderYear, {
-		left: 100,
-		top: 50,
-		right: 100
-	});
-	doc.add(sliderMonth, {
-		left: 100,
-		top: 150,
-		right: 100
-	});
+var doc = this.getRoot();
+doc.add(sliderYear, {
+	left: 100,
+	top: 50,
+	right: 100
+});
+doc.add(sliderMonth, {
+	left: 100,
+	top: 150,
+	right: 100
+});
+
+```
