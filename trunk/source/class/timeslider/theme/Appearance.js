@@ -12,19 +12,19 @@ qx.Theme.define("timeslider.theme.Appearance",
 {
 	appearances: {
 
-		"timeslider": {
+		"abstract-slider": {
 			alias: "widget",
 			include: "widget"
 		},
 
-		"timeslider/time-selector": {
+		"abstract-slider/selector": {
 			alias: "atom",
 			include: "atom"
 		},
 
-		"timeslider/time-selector-feedback": "timeslider/time-selector",
+		"abstract-slider/selector-feedback": "abstract-slider/selector",
 
-		"timeslider/background": "htmlarea"
+		"abstract-slider/background": "htmlarea"
 	}
 });
 
