@@ -16,6 +16,9 @@ using a resizable slider.
 ### Usage ###
 
 
+<!-- language: lang-js -->
+
+
 	//Include the appearances from the contribution
 	qx.Theme.include(YOUR_APPLICATION_NAMESPACE.theme.Appearance, timeslider.theme.Appearance);
 
