@@ -297,7 +297,7 @@ qx.Class.define('timeslider.TimeSlider',
 
         _normalizeEndDate: function(date){
             var d = this._normalizeDate(date);
-            this._incrDate(d);
+            //this._incrDate(d);
             d.setTime(d.getTime() - 1);
             return d;
         }
