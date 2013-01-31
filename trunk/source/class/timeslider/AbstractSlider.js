@@ -311,12 +311,10 @@ qx.Class.define('timeslider.AbstractSlider', {
 
 		__applySelectionRange: function(range,old) {
             if (
-                !range || 
-                !this.getBounds() || 
-                (range.start === (old && old.start)) ||
-                (range.end === (old && old.end))
-                
+                !range || !this.getBounds() || 
+                ((range.start === (old && old.start)) && (range.end === (old && old.end)))
             ){
+                qx.log.Logger.debug('__applySelectionRange: same range again. not updating...');
 				return;
 			}
             var bounds = this.getBounds()

@@ -12,11 +12,23 @@ qx.Class.define('timeslider.TimeSlider',
     construct: function(timeFrame,unitType){
         this.base(arguments);
         this.setUnitType(unitType || 'month');
-        this.setTimeFrame(timeFrame);
+        //this.setTimeFrame(timeFrame);
 
-        this.addListener('changeSelectionRange',function(e){
-            this.__updateTimeSelection(e.getData());           
+        this.addListener('changeSelectionRange',function(e){    
+            if(!this.__blockChanges){
+                // only update the selection range when the change got
+                // triggered externally (through changing properties)
+                this.__blockChanges = true;
+
+                //the selection range will also be updated internally.
+                this.__updateTimeSelection(e.getData());           
+                this.__blockChanges = false;
+            }
         },this);
+
+        this.addListener('changeTimeSelection', function(e){
+            qx.log.Logger.debug('TimeSlider==>changeTimeSelection: ' + e.getData());       
+        });
     },
 
     
@@ -56,51 +68,89 @@ qx.Class.define('timeslider.TimeSlider',
         __selectionEnd: null,
 
 
-        __applyTimeFrame: function(timeFrame){
-            this.__start = this._normalizeDate(timeFrame.getStart());
-            this.__end = this._normalizeEndDate(timeFrame.getEnd());
-    
-            //update amount of displayed units
-            var unitCount = this._calcUnitCount(this.__start,this.__end);
-            this.setUnitCount(unitCount);
+        // The selection was changed through the timeSlider and not by settng
+        // properties.
+        __blockChanges: false,
 
-            //update position of the selector
-            if(this.__selectionStart && this.__selectionEnd){
-                this.__updateSelectorPos();
+
+        __applyTimeFrame: function(timeFrame){
+            qx.log.Logger.debug(timeFrame,'TIMESLIDER: Applied new timeFrame externally ' + timeFrame);
+            var s = this._normalizeDate(timeFrame.getStart());
+            var e = this._normalizeEndDate(timeFrame.getEnd());
+
+            // check if update in necessary
+            if(
+                !this.__start || !this.__end ||
+                (s.getTime() !== this.__start.getTime() ||
+                e.getTime() !== this.__end.getTime())
+                ){
+                this.__start = s;
+                this.__end = e;
+
+                //update amount of displayed units
+                var unitCount = this._calcUnitCount(this.__start,this.__end);
+                this.setUnitCount(unitCount);
+
+                //update position of the selector
+                if(this.__selectionStart && this.__selectionEnd){
+                    this.__updateSelectorPos();
+                }
             }
         },
 
 
         __applyTimeSelection: function(timeSelection){
-            this.__selectionStart = this._normalizeDate(timeSelection.getStart());
-            this.__selectionEnd = this._normalizeEndDate(timeSelection.getEnd());
-            this.__updateSelectorPos();
+            if(!this.__blockChanges){
+                this.__blockChanges = true;
+
+                qx.log.Logger.debug(timeSelection,'TIMESLIDER: Applied new timeSelection externally through property. ' + timeSelection);
+                // only update the selection if it actually differs from the new timeFrame.
+                var s = this._normalizeDate(timeSelection.getStart());
+                var e = this._normalizeEndDate(timeSelection.getEnd());
+                
+                if(
+                    !this.__selectionStart || !this.__selectionStart ||
+                    (s.getTime() !== this.__selectionStart.getTime() ||
+                    e.getTime() !== this.__selectionEnd.getTime())
+                ){
+                    qx.log.Logger.debug('TIMESLIDER: TimeFrame differs, will update position.');
+
+                    // the timeFrame differs ==> update
+                    this.__selectionStart = s;
+                    this.__selectionEnd = e;
+                    this.__updateSelectorPos();
+                }
+                else{
+                    qx.log.Logger.debug('TIMESLIDER: TimeFrame identical, do nothing.');
+                }
+
+                this.__blockChanges = false;
+            }
         },
 
 
         __updateSelectorPos: function(){
-       
-            if(!this.__internalUpdate){
-                var startPos = this._calcUnitCount(this.__start,this.__selectionStart) - 1;
-                var endPos = this._calcUnitCount(this.__start,this.__selectionEnd);
-                var unitCount = this.getUnitCount();
+            var startPos = this._calcUnitCount(this.__start,this.__selectionStart) - 1;
+            var endPos = this._calcUnitCount(this.__start,this.__selectionEnd);
+            var unitCount = this.getUnitCount();
 
-                //the timeSelection was changed externally by setting the
-                //property and therefore the selection rang in the base
-                //class must be refreshed.
+            //the timeSelection was changed externally by setting the
+            //property and therefore the selection rang in the base
+            //class must be refreshed.
 
-                if(startPos >= 0 && endPos <= unitCount){
-                    this.setSelectionRange({
-                        start: startPos,
-                        end: endPos
-                    });
-                }
-                else{
-                    this.setSelectionRange({
-                        start: 0,
-                        end: 1
-                    });
-                }
+
+            qx.log.Logger.debug('StartPos: ' + startPos + ' from ' + this.__selectionStart + ' endPos ' + endPos + ' from ' + this.__selectionEnd );
+            if(startPos >= 0 && endPos <= unitCount){
+                this.setSelectionRange({
+                    start: startPos,
+                    end: endPos
+                });
+            }
+            else{
+                this.setSelectionRange({
+                    start: 0,
+                    end: 1
+                });
             }
         },
 
@@ -112,7 +162,6 @@ qx.Class.define('timeslider.TimeSlider',
          */
 
         __updateTimeSelection: function(selectionRange){
-            this.__internalUpdate = true;
             this.setTimeSelection( 
                 new timeslider.TimeFrame(
                     this._normalizeDate( 
@@ -121,7 +170,6 @@ qx.Class.define('timeslider.TimeSlider',
                         this._unitToDate(selectionRange.end))
                 )
             );
-            this.__internalUpdate = false;
         },
         
         __applyUnitType: function(type){
@@ -297,7 +345,7 @@ qx.Class.define('timeslider.TimeSlider',
 
         _normalizeEndDate: function(date){
             var d = this._normalizeDate(date);
-            //this._incrDate(d);
+            this._incrDate(d);
             d.setTime(d.getTime() - 1);
             return d;
         }
