@@ -37,6 +37,7 @@ qx.Class.define('timeslider.TimeSlider',
         timeFrame: {
             init: null,
             apply: '__applyTimeFrame',
+            nullable: true,
             event: 'changeTimeFrame'
         },
 
@@ -44,6 +45,7 @@ qx.Class.define('timeslider.TimeSlider',
         timeSelection: {
             init: null,
             apply: '__applyTimeSelection',
+            nullable: true,
             event: 'changeTimeSelection'
         },
 
@@ -90,10 +92,20 @@ qx.Class.define('timeslider.TimeSlider',
                 //update amount of displayed units
                 var unitCount = this._calcUnitCount(this.__start,this.__end);
                 this.setUnitCount(unitCount);
+                    
 
-                //update position of the selector
                 if(this.__selectionStart && this.__selectionEnd){
-                    this.__updateSelectorPos();
+                    if(this.__selectionStart.getTime() < s.getTime() ||
+                        this.__selectionEnd.getTime() > s.getTime()){
+
+                        qx.log.Logger.debug('TimeFrame would be out of range.');
+                        // the current selection is out of range, reset to null
+                        this.setSelectionRange(null);
+                    }
+                    else{
+                        //update position of the selector
+                        this.__updateSelectorPos();
+                    }
                 }
             }
         },
@@ -162,6 +174,11 @@ qx.Class.define('timeslider.TimeSlider',
          */
 
         __updateTimeSelection: function(selectionRange){
+            if(!selectionRange){
+                this.setTimeSelection(null);
+                return;
+            }
+
             this.setTimeSelection( 
                 new timeslider.TimeFrame(
                     this._normalizeDate( 
@@ -345,7 +362,7 @@ qx.Class.define('timeslider.TimeSlider',
 
         _normalizeEndDate: function(date){
             var d = this._normalizeDate(date);
-            this._incrDate(d);
+            //this._incrDate(d);
             d.setTime(d.getTime() - 1);
             return d;
         }

@@ -87,24 +87,32 @@ qx.Class.define('timeslider.AbstractSlider', {
 
         selectionRange: {
             init: null,
-            check: function(range){
-                var off = this.getUnitOffset();
-                if(range && (
-                    range.start >= range.end || 
-                    range.start < off ||
-                    range.end > off + this.getUnitCount())
-                ){
-                    return false;
-                }
-                return true;
-            },
+            transform: '__transformSelectinoRange',
             event: "changeSelectionRange",
+            nullable: true,
             apply: "__applySelectionRange"
         }
     },
 
 
 	members: {
+
+        // filter invalid selection ranges and return null
+        __transformSelectinoRange: function(range){
+            if(!range){
+                return null;
+            }
+
+            var off = this.getUnitOffset();
+            if(range && (
+                range.start >= range.end || 
+                range.start < off ||
+                range.end > off + this.getUnitCount())  ){
+                qx.log.Logger.debug('TimeSlider: Selection out of range. Defaulting selection range to null.');
+                return null;
+            }
+            return range;
+        },
 
 
         /**
@@ -310,8 +318,17 @@ qx.Class.define('timeslider.AbstractSlider', {
 
 
 		__applySelectionRange: function(range,old) {
+            if(!range){
+                // range is null, hide selection
+                this._excludeChildControl('selector');
+                return;
+            }
+            else if(!old){
+                this._showChildControl('selector');
+            }
+
             if (
-                !range || !this.getBounds() || 
+                !this.getBounds() || 
                 ((range.start === (old && old.start)) && (range.end === (old && old.end)))
             ){
                 qx.log.Logger.debug('__applySelectionRange: same range again. not updating...');
@@ -319,7 +336,8 @@ qx.Class.define('timeslider.AbstractSlider', {
 			}
             var bounds = this.getBounds()
             this._renderBackground(this.getUnitCount(),bounds.width,bounds.height);
-			this._positionSelector(range.start,range.end,true);
+            this._positionSelector(range.start,range.end,true);
+            qx.log.Logger.debug('New selection range ' + range.start + ' to ' + range.end);
 		},
 
         
