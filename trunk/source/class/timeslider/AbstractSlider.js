@@ -357,10 +357,11 @@ qx.Class.define('timeslider.AbstractSlider', {
 		__moving: false,
 		__resizingStart: false,
 		__resizingEnd: false,
+        __emptyAreaClick: false,
 
 		// the space between the selector borders and the mouse on first click
 		__diffLeft: 0,
-		__diffRight: 0,
+		//__diffRight: 0,
 
         // cache current selector position for faster access
         __selectorPosX: 0,
@@ -412,7 +413,7 @@ qx.Class.define('timeslider.AbstractSlider', {
 			switch (mode) {
 			case 0:
 				this.__diffLeft = mouseX - this.__selectorPosX;
-				this.__diffRight = this.__selectorWidth - (mouseX - this.__selectorPosX);
+				//this.__diffRight = this.__selectorWidth - (mouseX - this.__selectorPosX);
 				this.__moving = true;
 				break;
 
@@ -422,6 +423,21 @@ qx.Class.define('timeslider.AbstractSlider', {
 			case 1:
 				this.__resizingEnd = true;
 				break;
+
+            default:
+                // when clicking on an empty area, the month will be centered
+                // in the new timeSelection
+                var unitPx = this._getUnitPx();
+
+                // when 
+                this.__diffLeft = 
+                    Math.floor(
+                        Math.floor(this.__selectorWidth / unitPx) / 2 ) * unitPx + 2;
+                if(this.__diffLeft < 0){
+                    this.__diffLeft = 0;
+                }
+                this.__emptyAreaClick = true;
+                break;
 			}
 		},
 
@@ -446,6 +462,10 @@ qx.Class.define('timeslider.AbstractSlider', {
 				this.__resizingEnd = false;
 				this.__resizeEnd(mouseX, true);
 			}
+            else if (this.__emptyAreaClick) {
+                this.__emptyAreaClick = false;
+                this._move(mouseX,true);
+            }
 			this._excludeChildControl('selector-feedback');
 		},
 
@@ -574,6 +594,7 @@ qx.Class.define('timeslider.AbstractSlider', {
 				/* mouse is over the area usable to change the selector end */
 			}
 			else if (mouseX < scrLeft - border || mouseX > scrRight + border) {
+                /* mouse is over an empty area */
 				return 2;
 			}
 			else {
