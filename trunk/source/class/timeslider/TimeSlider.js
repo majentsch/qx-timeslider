@@ -12,7 +12,7 @@ qx.Class.define('timeslider.TimeSlider',
     construct: function(timeFrame,unitType){
         this.base(arguments);
         this.setUnitType(unitType || 'month');
-        //this.setTimeFrame(timeFrame);
+        this.setTimeFrame(timeFrame);
 
         this.addListener('changeSelectionRange',function(e){    
             if(!this.__blockChanges){
@@ -362,7 +362,7 @@ qx.Class.define('timeslider.TimeSlider',
 
         _normalizeEndDate: function(date){
             var d = this._normalizeDate(date);
-            //this._incrDate(d);
+            this._incrDate(d);
             d.setTime(d.getTime() - 1);
             return d;
         }
